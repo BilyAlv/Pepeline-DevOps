@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline DevOps - Proyecto Backend</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background-color: #0366d6;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            color: #0366d6;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .integrantes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-around;
+        }
+        .integrante {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 6px;
+            width: 30%;
+            min-width: 250px;
+            text-align: center;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .tech-item {
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        code {
+            background-color: #f6f8fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background-color: #f6f8fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .folder-structure {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background-color: #f6f8fa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        .success {
+            background-color: #2ea44f;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Proyecto DevOps - Pipeline de Backend</h1>
+        <p class="subtitle">Backend con Node.js, Express y SQL Server orquestado con Docker y GitHub Actions</p>
+    </header>
+
+    <div class="section">
+        <h2>👥 Integrantes del equipo</h2>
+        <div class="integrantes">
+            <div class="integrante">
+                <h3>Carolin Cristal Ortiz Alcántara</h3>
+                <p>2023-1333</p>
+            </div>
+            <div class="integrante">
+                <h3>Sander Rafael Fernández Tolentino</h3>
+                <p>2023-1001</p>
+            </div>
+            <div class="integrante">
+                <h3>Bily Manuel Álvarez Sánchez</h3>
+                <p>2023-0952</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📚 Tecnologías utilizadas</h2>
+        <div class="tech-stack">
+            <span class="tech-item">Node.js</span>
+            <span class="tech-item">Express</span>
+            <span class="tech-item">MSSQL</span>
+            <span class="tech-item">Docker</span>
+            <span class="tech-item">GitHub Actions</span>
+            <span class="tech-item">JavaScript</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📁 Estructura del proyecto</h2>
+        <pre class="folder-structure">PipelineDevOps/
+├── backend/
+│   ├── app.js
+│   ├── controllers/
+│   ├── db.js
+│   ├── routes/
+│   └── package.json
+├── docker/
+│   └── Dockerfile
+├── .github/workflows/
+│   └── ci.yml
+├── docker-compose.yml
+├── .env (no se sube al repo)
+├── README.md
+└── docs/
+    ├── INSTALACION.md
+    ├── MANUAL_OPERACIONES.md
+    └── PIPELINE.md</pre>
+    </div>
+
+    <div class="section">
+        <h2>🛠️ Levantar el entorno local con Docker</h2>
+        <p>Sigue estos pasos para configurar tu entorno de desarrollo local:</p>
+        <ol>
+            <li>
+                <p>Clona el repositorio:</p>
+                <pre><code>git clone https://github.com/Carocris/PipelineDevOps.git</code></pre>
+            </li>
+            <li>
+                <p>Crea un archivo <code>.env</code> en la raíz del proyecto:</p>
+                <pre><code>DB_USER=sa
+DB_PASSWORD=ccoa1234!
+DB_SERVER=db
+DB_NAME=DevOpsDB</code></pre>
+            </li>
+            <li>
+                <p>Levanta los servicios:</p>
+                <pre><code>docker-compose up --build</code></pre>
+            </li>
+            <li>
+                <p>Accede al backend: <a href="http://localhost:3000">http://localhost:3000</a></p>
+            </li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Endpoints disponibles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>Ruta</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>/usuarios</td>
+                    <td>Obtener todos los usuarios</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/usuarios</td>
+                    <td>Crear un nuevo usuario</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>✅ Estado del pipeline</h2>
+        <div>
+            <span class="badge success">CI</span>
+            <p>Este proyecto ejecuta un pipeline automatizado en cada push a la rama main, verificando la instalación y posible ejecución de pruebas en el backend.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>✨ ✨</p>
+        <p>📄 Este proyecto está bajo la Licencia MIT.</p>
+    </footer>
+</body>
+</html>
