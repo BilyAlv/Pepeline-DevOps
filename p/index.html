@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Proyecto DevOps con pipeline CI/CD utilizando Node.js, Express, SQL Server y Docker">
+    <meta name="keywords" content="DevOps, CI/CD, Node.js, Express, Docker, GitHub Actions, SQL Server">
+    <meta name="author" content="Carolin Ortiz, Sander Fernández, Bily Álvarez">
+    <meta property="og:title" content="Pipeline DevOps - Proyecto Backend">
+    <meta property="og:description" content="Proyecto DevOps con pipeline CI/CD utilizando Node.js, Express, SQL Server y Docker">
+    <meta property="og:image" content="https://raw.githubusercontent.com/Carocris/PipelineDevOps/main/backend/public/img/logo.png">
+    <meta property="og:url" content="https://carocris.github.io/PipelineDevOps/">
+    <title>Pipeline DevOps - Proyecto Backend</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --light-color: #f0f9ff;
+            --dark-color: #1e293b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --border-radius: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #334155;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M95,50 L80,30 L80,70 Z" fill="rgba(255,255,255,0.1)"/><path d="M20,50 L5,30 L5,70 Z" fill="rgba(255,255,255,0.1)"/><path d="M50,95 L30,80 L70,80 Z" fill="rgba(255,255,255,0.1)"/><path d="M50,5 L30,20 L70,20 Z" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        .github-btn {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .github-btn:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .github-btn i {
+            margin-right: 8px;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+        }
+
+        .nav-links a {
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 0;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            font-size: 1.75rem;
+        }
+
+        h2 i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .integrantes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .integrante {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: calc(33.333% - 20px);
+            min-width: 250px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease;
+        }
+
+        .integrante:hover {
+            transform: translateY(-5px);
+        }
+
+        .integrante img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .integrante h3 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .integrante p {
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f7ff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .tech-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .folder-structure {
+            font-family: 'Cascadia Code', 'Fira Code', Monaco, Consolas, 'Courier New', monospace;
+            white-space: pre;
+            line-height: 1.5;
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+        }
+
+        .installation {
+            counter-reset: step-counter;
+        }
+
+        .installation li {
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 40px;
+            counter-increment: step-counter;
+        }
+
+        .installation li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        code {
+            background-color: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Cascadia Code', 'Fira Code', Monaco, Consolas, 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #334155;
+        }
+
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: 'Cascadia Code', 'Fira Code', Monaco, Consolas, 'Courier New', monospace;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        table tr {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        table tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .badge-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .pipeline-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pipeline-status i {
+            color: var(--success-color);
+            margin-right: 10px;
+            font-size: 1.25rem;
+        }
+
+        .docs-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .doc-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--dark-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+            border-color: var(--primary-color);
+        }
+
+        .doc-card i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .doc-card h3 {
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .doc-card p {
+            color: #64748b;
+            margin-bottom: 15px;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .read-more {
+            color: var(--primary-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .read-more i {
+            font-size: 0.875rem;
+            margin-left: 5px;
+            margin-bottom: 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .feature {
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: var(--border-radius);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            border-color: var(--primary-color);
+            background-color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .feature p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-links a i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+
+        .social-media {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-media a {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-media a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .nav-links li {
+                margin: 0;
+            }
+            
+            .integrantes {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .integrante {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .nav-links {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .badge {
+                display: block;
+                margin-bottom: 10px;
+            }
+            
+            .docs-cards, .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content container">
+            <h1>🚀 Proyecto DevOps - Pipeline de Backend</h1>
+            <p class="subtitle">Un proyecto completo de CI/CD que integra backend con Node.js y Express, base de datos SQL Server, y orquestación con Docker y GitHub Actions</p>
+            <a href="https://github.com/Carocris/PipelineDevOps" class="github-btn">
+                <i class="fab fa-github"></i> Ver en GitHub
+            </a>
+            <a href="/backend/public/index.html" class="github-btn">
+                <i class="fab fa-github"></i> Ver Demo en vivo (GitHub Pages)
+            </a>
+        </div>
+    </header>
+
+    <nav class="navbar">
+        <div class="nav-container container">
+            <a href="#" class="nav-logo">Pipeline DevOps</a>
+            <ul class="nav-links">
+                <li><a href="#equipo" class="active">Equipo</a></li>
+                <li><a href="#tecnologias">Tecnologías</a></li>
+                <li><a href="#instalacion">Instalación</a></li>
+                <li><a href="#endpoints">API</a></li>
+                <li><a href="#documentacion">Docs</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="equipo" class="section">
+            <h2><i class="fas fa-users"></i> Integrantes del equipo</h2>
+            <div class="integrantes">
+                <div class="integrante">
+                    <img src="/api/placeholder/100/100" alt="Carolin Cristal Ortiz Alcántara">
+                    <h3>Carolin Cristal Ortiz Alcántara</h3>
+                    <p>2023-1333</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="integrante">
+                    <img src="/api/placeholder/100/100" alt="Sander Rafael Fernández Tolentino">
+                    <h3>Sander Rafael Fernández Tolentino</h3>
+                    <p>2023-1001</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="integrante">
+                    <img src="/api/placeholder/100/100" alt="Bily Manuel Álvarez Sánchez">
+                    <h3>Bily Manuel Álvarez Sánchez</h3>
+                    <p>2023-0952</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tecnologias" class="section">
+            <h2><i class="fas fa-code"></i> Tecnologías utilizadas</h2>
+            <div class="tech-stack">
+                <div class="tech-item"><i class="fab fa-node-js"></i> Node.js</div>
+                <div class="tech-item"><i class="fas fa-server"></i> Express</div>
+                <div class="tech-item"><i class="fas fa-database"></i> MSSQL</div>
+                <div class="tech-item"><i class="fab fa-docker"></i> Docker</div>
+                <div class="tech-item"><i class="fab fa-github-actions"></i> GitHub Actions</div>
+                <div class="tech-item"><i class="fab fa-js"></i> JavaScript</div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>CI/CD Pipeline</h3>
+                    <p>Integración y despliegue continuo automatizado a través de GitHub Actions, garantizando que cada cambio sea verificado antes de ser implementado.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Arquitectura Containerizada</h3>
+                    <p>Implementación completa en Docker, permitiendo un entorno de desarrollo consistente y fácil de replicar en cualquier sistema.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3>Control de Versiones</h3>
+                    <p>Gestión del código fuente utilizando Git con estrategias de branching para mantener la estabilidad del proyecto.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="estructura" class="section">
+            <h2><i class="fas fa-folder-open"></i> Estructura del proyecto</h2>
+            <pre class="folder-structure">PipelineDevOps/
+├── backend/
+│   ├── app.js
+│   ├── controllers/
+│   ├── db.js
+│   ├── routes/
+│   └── package.json
+├── docker/
+│   └── Dockerfile
+├── .github/workflows/
+│   └── ci.yml
+├── docker-compose.yml
+├── .env (no se sube al repo)
+├── README.md
+└── docs/
+    ├── INSTALACION.md
+    ├── MANUAL_OPERACIONES.md
+    └── PIPELINE.md</pre>
+        </section>
+
+        <section id="instalacion" class="section">
+            <h2><i class="fas fa-tools"></i> Levantar el entorno local con Docker</h2>
+            <ol class="installation">
+                <li>
+                    <p>Clona el repositorio:</p>
+                    <pre><code>git clone https://github.com/Carocris/PipelineDevOps.git
+cd PipelineDevOps</code></pre>
+                </li>
+                <li>
+                    <p>Crea un archivo <code>.env</code> en la raíz del proyecto:</p>
+                    <pre><code>DB_USER=sa
+DB_PASSWORD=ccoa1234!
+DB_SERVER=db
+DB_NAME=DevOpsDB</code></pre>
+                </li>
+                <li>
+                    <p>Levanta los servicios con Docker Compose:</p>
+                    <pre><code>docker-compose up --build</code></pre>
+                </li>
+                <li>
+                    <p>Accede al backend: <a href="http://localhost:3000">http://localhost:3000</a></p>
+                </li>
+            </ol>
+        </section>
+
+        <section id="endpoints" class="section">
+            <h2><i class="fas fa-sitemap"></i> Endpoints disponibles</h2>
+            <p>La API ofrece los siguientes endpoints para interactuar con el sistema:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Ruta</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-success">GET</span></td>
+                        <td><code>/usuarios</code></td>
+                        <td>Obtener todos los usuarios registrados en el sistema</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-info">POST</span></td>
+                        <td><code>/usuarios</code></td>
+                        <td>Crear un nuevo usuario en el sistema</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="pipeline" class="section">
+            <h2><i class="fas fa-cogs"></i> Estado del pipeline</h2>
+            <div class="pipeline-status">
+                <i class="fas fa-check-circle"></i>
+                <span class="badge badge-success">CI</span>
+            </div>
+            <p>Este proyecto ejecuta un pipeline automatizado en cada push a la rama main, verificando la instalación y posible ejecución de pruebas en el backend.</p>
+            <p>El pipeline incluye las siguientes etapas:</p>
+            <ul>
+                <li>Verificación de la estructura del código</li>
+                <li>Construcción de la imagen Docker</li>
+                <li>Ejecución de pruebas automatizadas</li>
+                <li>Despliegue en entorno de desarrollo</li>
+            </ul>
+        </section>
+
+        <section id="documentacion" class="section">
+            <h2><i class="fas fa-book"></i> Documentación</h2>
+            <p>A continuación encontrarás los enlaces a la documentación detallada del proyecto:</p>
+            
+            <div class="docs-cards">
+                <a href="https://github.com/BilyAlv/Pepeline-DevOps/blob/main/README.md" class="doc-card">
+                    <i class="fas fa-download"></i>
+                    <h3>Guía de Instalación</h3>
+                    <p>Instrucciones detalladas para configurar el entorno de desarrollo local o en la nube.</p>
+                    <div class="card-footer">
+                        <span class="read-more">Leer más <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a href="https://github.com/BilyAlv/Pepeline-DevOps/blob/main/README.md" class="doc-card">
+                    <i class="fas fa-cog"></i>
+                    <h3>Manual de Operaciones</h3>
+                    <p>Procedimientos para gestionar el mantenimiento y la operación del sistema.</p>
+                    <div class="card-footer">
+                        <span class="read-more">Leer más <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a href="https://github.com/BilyAlv/Pepeline-DevOps/blob/main/README.md" class="doc-card">
+                    <i class="fas fa-code-branch"></i>
+                    <h3>Documentación del Pipeline</h3>
+                    <p>Detalles sobre la configuración y funcionamiento del pipeline CI/CD.</p>
+                    <div class="card-footer">
+                        <span class="read-more">Leer más <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Acerca del Proyecto</h3>
+                    <p>Proyecto académico desarrollado para demostrar las capacidades de integración y despliegue continuo utilizando tecnologías modernas de desarrollo.</p>
+                    <div class="social-media">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#equipo"><i class="fas fa-angle-right"></i> Equipo</a></li>
+                        <li><a href="#tecnologias"><i class="fas fa-angle-right"></i> Tecnologías</a></li>
+                        <li><a href="#instalacion"><i class="fas fa-angle-right"></i> Instalación</a></li>
+                        <li><a href="#endpoints"><i class="fas fa-angle-right"></i> API</a></li>
+                        <li><a href="#documentacion"><i class="fas fa-angle-right"></i> Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul class="footer-links">
+                        <li><a href="mailto:info@example.com"><i class="fas fa-envelope"></i> Grupo@gmail.com</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> ITLA</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> + </a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Pipeline DevOps. Todos los derechos reservados. Desarrollado con <i class="fas fa-heart"></i>
+            </div>
+        </div>
+    </footer>
+
+    <div class="scroll-to-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // Mostrar/ocultar botón scroll to top
+        window.addEventListener('scroll', function() {
+            const scrollBtn = document.getElementById('scrollTop');
+            if (window.scrollY > 300) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        });
+
+        // Función scroll to top
+        document.getElementById('scrollTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Navegación suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
