@@ -93,7 +93,7 @@ Este proyecto ejecuta un pipeline automatizado en cada push a la rama `main`, ve
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT.
+Este proyecto está bajo la Licencia MIT
 
 
 
